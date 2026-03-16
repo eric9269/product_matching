@@ -1,0 +1,36 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# 環境變數檔案 - 包含敏感資訊（API Keys）
+.env
+
+# 運行時狀態文件（佇列系統）
+active_scrapers.json
+active_llm_requests.json
+active_users.json
+search_logs.json
+session_comparison_times.json
+user_peak.json
+
+# Streamlit secrets
+.streamlit/secrets.toml
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 作業系統相關
+.DS_Store
+Thumbs.db
+
+test/models/
