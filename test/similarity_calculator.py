@@ -134,11 +134,7 @@ def calculate_all_similarities(momo_csv='momo.csv', pchome_csv='pchome.csv',
     # 載入模型
     print("\n🤖 載入 SentenceTransformer 模型...")
     if model_path is None:
-        model_path = os.path.join("models", "models20-multilingual-e5-large_fold_1")
-    
-    if not os.path.exists(model_path):
-        print(f"  ❌ 找不到模型路徑: {model_path}")
-        return False
+        model_path = 'eric920609/20-multilingual-e5-large_fold_1'
     
     try:
         model = SentenceTransformer(model_path)

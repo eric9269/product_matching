@@ -1431,14 +1431,15 @@ def get_api_key():
 # Ollama 配置
 OLLAMA_MODEL = os.getenv('OLLAMA_MODEL', 'qwen2.5:14b')
 OLLAMA_HOST = os.getenv('OLLAMA_HOST', 'http://localhost:11434')
-MODEL_PATH = os.getenv('MODEL_PATH', os.path.join("models", "models20-multilingual-e5-large_fold_1"))
+MODEL_PATH = os.getenv('MODEL_PATH', 'eric920609/20-multilingual-e5-large_fold_1')
 
 @st.cache_resource
 def load_model(path):
-    if not os.path.exists(path):
-        st.error(f"找不到模型路徑：{path}")
+    try:
+        return SentenceTransformer(path)
+    except Exception as e:
+        st.error(f"載入模型失敗：{e}")
         return None
-    return SentenceTransformer(path)
 
 def load_local_data():
     """載入本地預設資料（僅用於初始化示例）"""
