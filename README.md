@@ -71,9 +71,16 @@ CSE/
 │   ├── momo.csv               # MOMO 商品資料（爬蟲產出）
 │   └── pchome.csv             # PChome 商品資料（爬蟲產出）
 │
-└── docs/                      # 文件與測試報告
-    ├── stage2_performance.json           # Stage 2 LLM 驗證效能紀錄
-    └── vector_blocking_test_results.json # 向量阻塞測試結果
+├── state/                     # 執行期 JSON 狀態檔（佇列、記錄、性能）
+│   ├── active_scrapers.json
+│   ├── active_llm_requests.json
+│   ├── active_users.json
+│   ├── search_logs.json
+│   ├── user_peak.json
+│   ├── stage2_performance.json
+│   └── session_comparison_times.json
+│
+└── docs/                      # 文件目錄
 ```
 
 ---
@@ -95,10 +102,10 @@ CSE/
   - 預設模型：`qwen2.5:14b`
   - 判斷規則：品牌、型號、規格、容量、數量一致（顏色不同視為相同商品）
 - **佇列系統**：管理多用戶的爬蟲請求與 LLM 請求
-  - 爬蟲佇列：`active_scrapers.json`
-  - LLM 佇列：`active_llm_requests.json`（最多 3 個並行）
-  - 用戶追蹤：`active_users.json`、`user_peak.json`
-- **搜尋記錄**：`search_logs.json`（記錄每次搜尋的關鍵字與結果）
+  - 爬蟲佇列：`state/active_scrapers.json`
+  - LLM 佇列：`state/active_llm_requests.json`（最多 3 個並行）
+  - 用戶追蹤：`state/active_users.json`、`state/user_peak.json`
+- **搜尋記錄**：`state/search_logs.json`（記錄每次搜尋的關鍵字與結果）
 
 主要函數：
 
@@ -151,12 +158,17 @@ CSE/
 
 這兩個檔案由爬蟲模組產生，也可手動準備。`query` 欄位記錄搜尋時使用的關鍵字。
 
-### 文件目錄 (`docs/`)
+### 狀態目錄 (`state/`)
 
 | 檔案 | 說明 |
 |------|------|
-| `stage2_performance.json` | Stage 2 LLM 驗證的效能紀錄（耗時、候選數、配對數等） |
-| `vector_blocking_test_results.json` | 向量計算阻塞測試結果（多用戶並行效能評估） |
+| `active_scrapers.json` | 爬蟲佇列狀態 |
+| `active_llm_requests.json` | LLM 佇列狀態 |
+| `active_users.json` | 在線用戶追蹤 |
+| `search_logs.json` | 搜尋關鍵字與結果紀錄 |
+| `user_peak.json` | 在線用戶峰值統計 |
+| `stage2_performance.json` | Stage 2 LLM 驗證效能紀錄 |
+| `session_comparison_times.json` | 每個 Session 的比對耗時統計 |
 
 ### 設定檔
 

@@ -19,24 +19,33 @@ from product_scraper import fetch_products_for_momo, fetch_products_for_pchome, 
 from similarity_calculator import calculate_all_similarities
 from dotenv import load_dotenv
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+STATE_DIR = os.path.join(BASE_DIR, "state")
+os.makedirs(STATE_DIR, exist_ok=True)
+
 # ============= 全局線程鎖（用於搜尋記錄） =============
 log_lock = threading.Lock()
 
 # ============= LLM 佇列系統（跨進程版本）=============
 MAX_CONCURRENT_LLM_REQUESTS = 3  # 最多同時處理3個LLM請求（與爬蟲並行數一致）
-LLM_REQUESTS_FILE = "active_llm_requests.json"  # LLM 請求狀態文件
+LLM_REQUESTS_FILE = os.path.join(STATE_DIR, "active_llm_requests.json")  # LLM 請求狀態文件
 llm_queue_lock = threading.Lock()  # LLM 佇列文件訪問鎖
 llm_executor = ThreadPoolExecutor(max_workers=MAX_CONCURRENT_LLM_REQUESTS, thread_name_prefix="LLM_Worker")
 
 # ============= 用戶峰值追蹤系統 =============
 users_lock = threading.Lock()  # 線程鎖
 USER_TIMEOUT = 300  # 用戶超時時間（秒），超過此時間視為離線
-USERS_FILE = "active_users.json"  # 用戶追蹤文件
+USERS_FILE = os.path.join(STATE_DIR, "active_users.json")  # 用戶追蹤文件
 
 # ============= 爬蟲佇列系統（跨進程版本）=============
 MAX_CONCURRENT_SCRAPERS = 3  # 最多同時 3 組爬蟲（= 6 個 Chrome）
-SCRAPERS_FILE = "active_scrapers.json"  # 爬蟲狀態文件
+SCRAPERS_FILE = os.path.join(STATE_DIR, "active_scrapers.json")  # 爬蟲狀態文件
 scraper_queue_lock = threading.Lock()  # 文件訪問鎖
+
+SEARCH_LOG_FILE = os.path.join(STATE_DIR, "search_logs.json")
+USER_PEAK_FILE = os.path.join(STATE_DIR, "user_peak.json")
+STAGE2_PERFORMANCE_FILE = os.path.join(STATE_DIR, "stage2_performance.json")
+SESSION_COMPARISON_TIMES_FILE = os.path.join(STATE_DIR, "session_comparison_times.json")
 
 # 載入環境變數
 load_dotenv()
@@ -60,7 +69,7 @@ def log_search_query(keyword, user_session_id, momo_count=0, pchome_count=0):
         momo_count: MOMO 搜尋結果數量
         pchome_count: PChome 搜尋結果數量
     """
-    log_file = "search_logs.json"
+    log_file = SEARCH_LOG_FILE
     
     try:
         print(f"🔍 log_search_query 被調用: keyword={keyword}, user={user_session_id}")
@@ -113,7 +122,7 @@ def update_user_peak(user_session_id, action='join'):
         user_session_id: 用戶 Session ID
         action: 'join' 首次加入 / 'update' 更新活動時間 / 'leave' 離開
     """
-    peak_file = "user_peak.json"
+    peak_file = USER_PEAK_FILE
     
     try:
         with users_lock:
@@ -2496,7 +2505,7 @@ def show_comparison_dialog(selected_product_row, dialog_key):
                     }
                     
                     # 寫入詳細性能日誌（追加模式）
-                    performance_file = "stage2_performance.json"
+                    performance_file = STAGE2_PERFORMANCE_FILE
                     try:
                         if os.path.exists(performance_file):
                             try:
@@ -2520,7 +2529,7 @@ def show_comparison_dialog(selected_product_row, dialog_key):
                         print(f"❌ 記錄性能數據失敗: {e}")
                     
                     # 寫入 Session 比對時間記錄（專門用於追蹤每個session的比對時間）
-                    session_times_file = "session_comparison_times.json"
+                    session_times_file = SESSION_COMPARISON_TIMES_FILE
                     try:
                         # 讀取現有的session記錄
                         if os.path.exists(session_times_file):
