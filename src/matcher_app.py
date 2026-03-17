@@ -11,6 +11,10 @@ import sys
 import threading
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
+
+# 確保 src/ 目錄在模組搜尋路徑中
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
 from product_scraper import fetch_products_for_momo, fetch_products_for_pchome, save_to_csv
 from similarity_calculator import calculate_all_similarities
 from dotenv import load_dotenv
@@ -1443,14 +1447,9 @@ def load_model(path):
 
 def load_local_data():
     """載入本地預設資料（僅用於初始化示例）"""
-    # 先嘗試從根目錄讀取
-    momo_path = "momo.csv"
-    pchome_path = "pchome.csv"
-    
-    # 如果根目錄沒有，再試 dataset/test/
-    if not os.path.exists(momo_path):
-        momo_path = os.path.join("dataset", "test", "momo.csv")
-        pchome_path = os.path.join("dataset", "test", "pchome.csv")
+    # 從 data/ 目錄讀取
+    momo_path = os.path.join("data", "momo.csv")
+    pchome_path = os.path.join("data", "pchome.csv")
     
     try:
         # 直接讀取 CSV，使用第一行作為表頭

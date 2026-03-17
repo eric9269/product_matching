@@ -1419,7 +1419,7 @@ if __name__ == "__main__":
     momo_products = fetch_products_for_momo(keyword, num)
     
     # 儲存 MOMO 商品至 CSV 檔案
-    save_to_csv(momo_products, "momo.csv", english_keyword)
+    save_to_csv(momo_products, os.path.join("data", "momo.csv"), english_keyword)
 
     if momo_products:
         print(f"\n找到 {len(momo_products)} 個 MOMO 商品：")
@@ -1441,7 +1441,7 @@ if __name__ == "__main__":
     pchome_products = fetch_products_for_pchome(keyword, num)
     
     # 儲存 PChome 商品至 CSV 檔案
-    save_to_csv(pchome_products, "pchome.csv", english_keyword)
+    save_to_csv(pchome_products, os.path.join("data", "pchome.csv"), english_keyword)
 
     if pchome_products:
         print(f"\n找到 {len(pchome_products)} 個 PChome 商品：")
@@ -1459,5 +1459,5 @@ if __name__ == "__main__":
         print("沒有找到 PChome 商品")
     
     print(f"\n=== 完成！===")
-    print(f"MOMO 商品已儲存至: momo.csv")
-    print(f"PChome 商品已儲存至: pchome.csv")
+    print(f"MOMO 商品已儲存至: data/momo.csv")
+    print(f"PChome 商品已儲存至: data/pchome.csv")

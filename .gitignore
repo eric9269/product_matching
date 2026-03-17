@@ -32,5 +32,3 @@ user_peak.json
 # 作業系統相關
 .DS_Store
 Thumbs.db
-
-test/models/

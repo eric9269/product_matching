@@ -97,7 +97,7 @@ def calculate_similarities_for_all(model, momo_df, pchome_df, threshold=0.739465
     return results
 
 
-def calculate_all_similarities(momo_csv='momo.csv', pchome_csv='pchome.csv', 
+def calculate_all_similarities(momo_csv=os.path.join('data', 'momo.csv'), pchome_csv=os.path.join('data', 'pchome.csv'), 
                                model_path=None, output_file='similarities.json',
                                threshold=0.739465):
     """
